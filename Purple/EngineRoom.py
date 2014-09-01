@@ -60,7 +60,8 @@ class ParseText:
         # where_was_i[0] -> step in rule list
         # where_was_i[1] -> choosen rule
         # where_was_i[2] -> num of tokens, so we can know how
-        # many tokens we need to go back current rule is not ok
+        # many tokens we need to go back if the current rule 
+        # is not THE one
         self.daddy_stack = [self.start_nonterminal]
         self.helperstack = [[self.start_nonterminal, 0]]
         self.where_was_i = {self.start_nonterminal: [[0, 0, 0]]}
@@ -119,26 +120,25 @@ class ParseText:
         """
         rule_list = self.grammar[self.daddy_stack[-1]][
             self.where_was_i[self.daddy_stack[-1]][-1][1]]
-        # ovde provera da li je dosao i do kraja pravila
+        # are we at and of the rule
         if len(rule_list[self.where_was_i[self.daddy_stack[-1]][-1][0]:]) == 0:
             if len(self.daddy_stack) > 1:
                 self.daddy_stack.pop()
                 return self._validate(token_list)
             elif len(token_list) > self.x:
                 return False
-        # da li je presao sve tokene u listi, ako jeste
+        # did we check all tokens in the list
         if self.x == len(token_list):
             if len(self.daddy_stack) == 1:
                 self.where_was_i = mergeall(self.removed, self.where_was_i)
                 return True
             else:
-                # proveri da li ima jos listi pravila, ako ima prebaci na
-                # sledecu listu i smanji self.x
+                # check if there are more list of rules, and if there are
+                # move to the next rule list and decrease self.x
                 if self.where_was_i[self.daddy_stack[-1]][-1][1] < len(self.grammar[self.daddy_stack[-1]]):
                     self.where_was_i = mergeall(self.removed, self.where_was_i)
                     self.removed.clear()
                     while self.helperstack[-1][0] is not self.daddy_stack[-1]:
-                        # mora se smanjiti i na self.removedma ukupan broj...
                         del self.where_was_i[self.helperstack[-1][0]][-1]
                         if self.helperstack[-1][0] in self.removed:
                             self.removed[self.helperstack[-1][0]][0] -= 1
@@ -149,8 +149,7 @@ class ParseText:
                 if self.where_was_i[self.daddy_stack[-1]][-1][0] == len(
                         self.grammar[self.daddy_stack[-1]][self.where_was_i[self.daddy_stack[-1]][-1][1]]) - 1:
                     if len(self.daddy_stack) > 1:
-                        # ne moze da se vrati skroz do kraja , tj moze samo do
-                        # expr
+                        # we can not get back all the way
                         if len(self.where_was_i[self.daddy_stack[-1]]) > 1:
                             last_one = self.where_was_i[
                                 self.daddy_stack[-1]].pop()
@@ -160,23 +159,21 @@ class ParseText:
                         self.daddy_stack.pop()
                         return self._validate(token_list)
                 return False
-        # ako je na pocetku odredjene grupe pravila (jedno pravilo moze da ima vise grupa pravila)
-        # i ako je duzina te grupe pravila veca oda broja preostalih tokena
-        # koje treba preci
+        # if it is at the begging of the certain rule group(one rule can have
+        # more then one group of rules)
+        # and if length of that r.g. is biger than the num of 
         if self.where_was_i[self.daddy_stack[-1]][-1][0] == 0 and len(rule_list) > len(token_list) - self.x:
-            # ako je broj grupa pravila koja proizilazi iz poslednjeg na stack-u veca od broja predjenih grupa
-            # tj ako nije presao sve grupe pravila
+            # if we didnt check all rule groups
             if len(self.grammar[self.daddy_stack[-1]]) - 1 > self.where_was_i[self.daddy_stack[-1]][-1][1]:
-                # prebaci na sledecu grupu pravila
+                # get to the next rule list
                 self.move_forward()
-                # ovde izbrisi sa gdejebio poslednji i obrisi decu njegovog
-                # caleta
+                # delete the last one on where_was_i and delete
+                # kids of his parent
                 self.x -= self.downsizehs()
                 return self._validate(token_list)
-            # ukoliko daddy_stack predzadnji nije na poslednjem pravilu
             elif len(self.daddy_stack) > 1:
-                # ukoliko je presao sve grupe pravila , obrisi sve sa
-                # helperstacka do c
+                # if we tried every grupe of rules, delete everything
+                # from helperstack ()
                 del self.daddy_stack[-1]
                 while self.helperstack[-1][0] is not self.daddy_stack[-1]:
                     if len(self.removed[self.helperstack[-1][0]]) > 1 and self.removed[self.helperstack[-1][0]][-1][
@@ -192,22 +189,18 @@ class ParseText:
             else:
                 return False
         for index, pravilo in enumerate(rule_list[self.where_was_i[self.daddy_stack[-1]][-1][0]:]):
-            # proveri da li je list/terminal i da li je jednak tipu tokena
+            # check if it leaf/terminal
             if pravilo not in self.grammar.keys():
-                # za svaki sledeci pomeri pokazivac
                 self.where_was_i[self.daddy_stack[-1]][-1][0] += 1
-                # znaci da je list, proveri da li je to taj tip tokena (vodi
-                # racuna na velika/mala slova)
+                # it means its leaf, next check if it is that type of tokens
                 if self.x <= len(token_list) - 1 and pravilo == token_list[self.x].type.lower():
                     self.x += 1
                     self.where_was_i[self.daddy_stack[-1]][-1][2] += 1
                     self.uphelperstack()
-                    # da li je presao jednu listu pravila , ako jeste i ako na
-                    # daddy_stack-u ima vise od jednog
+                    # did we finish one list of rules, if we did and
+                    # on daddy_stack has more then one 
                     if self.where_was_i[self.daddy_stack[-1]][-1][0] == len(rule_list):
                         if len(self.daddy_stack) > 1:  # reason for cushion!
-                            # ne moze da se vrati skroz do kraja , tj moze samo
-                            # do expr
                             if len(self.where_was_i[self.daddy_stack[-1]]) > 1:
                                 poslednji = self.where_was_i[
                                     self.daddy_stack[-1]].pop()
@@ -220,13 +213,9 @@ class ParseText:
                             return False
                 elif self.x <= len(token_list) - 1 and pravilo != token_list[self.x].type.lower():
                     if len(self.grammar[self.daddy_stack[-1]]) - 1 > self.where_was_i[self.daddy_stack[-1]][-1][1]:
-                        # print "da li je i ovde usao a trebalo bi", self.x
                         self.where_was_i[self.daddy_stack[-1]][-1][1] += 1
-                        # resetuj gde je stao tj x == 0
+                        # reset where were we aka x == 0
                         self.where_was_i[self.daddy_stack[-1]][-1][0] = 0
-                        # smanjujem x za sve pronadjene u tom pravilu
-                        # dodaj provere za izbacene ako nema ni jednog u njima
-                        # i smanjuj kako ih izbacujes
                         while self.helperstack[-1][0] is not self.daddy_stack[-1]:
                             if len(self.removed[self.helperstack[-1][0]]) > 1 and \
                                 self.removed[self.helperstack[-1][0]][-1][0] == \
@@ -235,15 +224,9 @@ class ParseText:
                             else:
                                 del self.where_was_i[self.helperstack[-1][0]][-1]
                             self.removed[self.helperstack[-1][0]][0] -= 1
-                            # ne odradi downsize do kraja tj do andmathopa #
-                            # ili remove pa na kraju downsize?
                             self.x -= self.removefromhs()
-                            # i kako brises sa helperstacka tako brisi
-                            # poslednjeg sa where_was_i+self.removed stacka
                         self.x -= self.downsizehs()
                         self.where_was_i[self.daddy_stack[-1]][-1][2] = 0
-                        # del self.where_was_i[self.daddy_stack[-1]][-1]   #baca out ouf range na 87 i ovde je problem
-                        # i ovde smanji za jedan u self.removedma
                         return self._validate(token_list)
                     elif len(self.daddy_stack) > 1:
                         while self.helperstack[-1][0] is not self.daddy_stack[-1]:
@@ -255,38 +238,27 @@ class ParseText:
                                 del self.where_was_i[self.helperstack[-1][0]][-1]
                             self.removed[self.helperstack[-1][0]][0] -= 1
                             self.x -= self.removefromhs()
-                        # ovde mora da poizbacuje sve do daddy_stacka
+                        
                         self.x -= self.downsizehs()
-                        # zameni mesta del sa self.daddy_stack-a i 467 i mosdef
-                        # obrisati poslednji sa gde je stao stacka-a
-                        # da li obrisati ovo?
                         self.where_was_i[self.daddy_stack[-1]][-1][2] = 0
-                        # i ovde takodje smanji izbacene
+                        
                         del self.where_was_i[self.daddy_stack[-1]][-1]
                         self.removed[self.daddy_stack[-1]][0] -= 1
                         del self.daddy_stack[-1]
-                        # ukoliko je nije dosao do poslednje liste pravila, tj.
-                        # ukoliko imas jos listi pravila
+                        # if there are more rule lists in the list
                         if len(self.grammar[self.daddy_stack[-1]]) - 1 > self.where_was_i[self.daddy_stack[-1]][-1][1]:
                             self.move_forward()
-                            # downsize sve na helperstacku za onoliko koliko ima na poslednjem,
-                            # s tim da ne treba obrisati poslednji
                             self.x -= self.downsizehs()
                             self.deletelasths()
                         else:
-                            # stavi da je dosao do kraja pravila u where_was_i jer ako je == samo ce da
-                            # predje na sledece pravilo a ne niz pravila
-                            # grammar[self.daddy_stack[-1]][self.where_was_i[self.daddy_stack[-1]][-1][1]]
                             self.where_was_i[self.daddy_stack[-1]][-1][0] = len(
                                 self.grammar[self.daddy_stack[-1]][self.where_was_i[self.daddy_stack[-1]][-1][1]])
                         return self._validate(token_list)
                 else:
                     return False
-            # ako nije list/terminal nadji listu sa tim key-em u dictionary-u i
-            # dodaj ga na caca stack
+            # if it is not leaf/terminal find list 
+            # with that key in grammar dic and add it on daddy_stack
             else:
-                # where_was_i[daddy_stack[-1]][0]=index+1 #nije tu stao, jer index
-                # uvek krece od nule
                 self.where_was_i[self.daddy_stack[-1]][-1][0] += 1
                 self.daddy_stack.append(pravilo)
                 self.addnewtohs(pravilo)
@@ -391,7 +363,3 @@ class AST(object):
                     self.createtree(rule,trace)
             else:
                 self.dek.popleft()
-
-
-if __name__ == '__main__':
-   print "e desi"
