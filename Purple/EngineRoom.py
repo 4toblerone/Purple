@@ -188,12 +188,12 @@ class ParseText:
                 return self._validate(token_list)
             else:
                 return False
-        for index, pravilo in enumerate(rule_list[self.where_was_i[self.daddy_stack[-1]][-1][0]:]):
+        for index, rule in enumerate(rule_list[self.where_was_i[self.daddy_stack[-1]][-1][0]:]):
             # check if it leaf/terminal
-            if pravilo not in self.grammar.keys():
+            if rule not in self.grammar.keys():
                 self.where_was_i[self.daddy_stack[-1]][-1][0] += 1
                 # it means its leaf, next check if it is that type of tokens
-                if self.x <= len(token_list) - 1 and pravilo == token_list[self.x].type.lower():
+                if self.x <= len(token_list) - 1 and rule == token_list[self.x].type.lower():
                     self.x += 1
                     self.where_was_i[self.daddy_stack[-1]][-1][2] += 1
                     self.uphelperstack()
@@ -211,7 +211,7 @@ class ParseText:
                             return self._validate(token_list)
                         else:
                             return False
-                elif self.x <= len(token_list) - 1 and pravilo != token_list[self.x].type.lower():
+                elif self.x <= len(token_list) - 1 and rule != token_list[self.x].type.lower():
                     if len(self.grammar[self.daddy_stack[-1]]) - 1 > self.where_was_i[self.daddy_stack[-1]][-1][1]:
                         self.where_was_i[self.daddy_stack[-1]][-1][1] += 1
                         # reset where were we aka x == 0
@@ -260,14 +260,14 @@ class ParseText:
             # with that key in grammar dic and add it on daddy_stack
             else:
                 self.where_was_i[self.daddy_stack[-1]][-1][0] += 1
-                self.daddy_stack.append(pravilo)
-                self.addnewtohs(pravilo)
-                if pravilo not in self.where_was_i:
-                    self.where_was_i[pravilo] = []
-                self.where_was_i[pravilo].append([0, 0, 0])
-                self.removed[pravilo] = self.removed.get(pravilo, [-1])
-                self.removed[pravilo][0] = len(
-                    self.where_was_i[pravilo]) + len(self.removed[pravilo]) - 2
+                self.daddy_stack.append(rule)
+                self.addnewtohs(rule)
+                if rule not in self.where_was_i:
+                    self.where_was_i[rule] = []
+                self.where_was_i[rule].append([0, 0, 0])
+                self.removed[rule] = self.removed.get(rule, [-1])
+                self.removed[rule][0] = len(
+                    self.where_was_i[rule]) + len(self.removed[rule]) - 2
                 return self._validate(token_list)
 
 
