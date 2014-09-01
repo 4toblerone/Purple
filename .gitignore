@@ -38,9 +38,9 @@ Thumbs.db
 
 # Python related #
 ######################
-.pyc
+*.pyc
 
 
 # IDE related #
 ###############
-.idea
+*.idea
