@@ -130,13 +130,13 @@ class ParseText:
         # did we check all tokens in the list
         if self.x == len(token_list):
             if len(self.daddy_stack) == 1:
-                self.where_was_i = mergeall(self.removed, self.where_was_i)
+                self.where_was_i = self.mergeall(self.removed, self.where_was_i)
                 return True
             else:
                 # check if there are more list of rules, and if there are
                 # move to the next rule list and decrease self.x
                 if self.where_was_i[self.daddy_stack[-1]][-1][1] < len(self.grammar[self.daddy_stack[-1]]):
-                    self.where_was_i = mergeall(self.removed, self.where_was_i)
+                    self.where_was_i = self.mergeall(self.removed, self.where_was_i)
                     self.removed.clear()
                     while self.helperstack[-1][0] is not self.daddy_stack[-1]:
                         del self.where_was_i[self.helperstack[-1][0]][-1]
@@ -270,32 +270,31 @@ class ParseText:
                     self.where_was_i[rule]) + len(self.removed[rule]) - 2
                 return self._validate(token_list)
 
+    @staticmethod #no need to be static? 
+    def mergeall(removed, where_was_i):
 
-def mergeall(removed, where_was_i):
+        def merge(popeditems, key):
+            lista = []
+            i = 0
+            where_was_i_part = deque(where_was_i[key])
+            length = len(popeditems) + len(where_was_i_part)  # 3
+            while i < length:
+                if popeditems and i == popeditems[0][0]:
+                    lista.append(popeditems[0][1])
+                    del popeditems[0]
+                elif len(where_was_i_part) > 0:
+                    lista.append(where_was_i_part[0])
+                    del where_was_i_part[0]
+                else:
+                    lista.append(popeditems[0][1])
+                    del popeditems[0]
+                i += 1
+            return lista
 
-    def merge(popeditems, key):
-
-        lista = []
-        i = 0
-        where_was_i_part = deque(where_was_i[key])
-        length = len(popeditems) + len(where_was_i_part)  # 3
-        while i < length:
-            if popeditems and i == popeditems[0][0]:
-                lista.append(popeditems[0][1])
-                del popeditems[0]
-            elif len(where_was_i_part) > 0:
-                lista.append(where_was_i_part[0])
-                del where_was_i_part[0]
-            else:
-                lista.append(popeditems[0][1])
-                del popeditems[0]
-            i += 1
-        return lista
-
-    for key, value in removed.iteritems():
-        if len(value) > 1:
-            where_was_i[key] = merge(value[1:], key)
-    return where_was_i
+        for key, value in removed.iteritems():
+            if len(value) > 1:
+                where_was_i[key] = merge(value[1:], key)
+        return where_was_i
 
 
 class AST(object):
