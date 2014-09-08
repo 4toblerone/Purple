@@ -30,10 +30,23 @@ with token list as its argument
 parser.parse(token_list)
 ```
 
-During parsing process parser is making trace which idicates how to build
+During parsing process, parser is making trace which indicates how to build
 something that very much resembles to AST.
 
 ## AST
+
+Every symbol in a grammar should be represented with a class of its own. 
+Depending if symbol is a "leaf" or a "node" (it's a leaf if it doesn't have production rule
+otherwise it's a node) coresponding class should inherit from LeafNode or Node class.
+So in our example for symbols mathop and plus we would have
+```
+class MathopNode(Node):
+	pass
+	
+class PlusNode(LeafNode):
+	pass
+```
+
 
 To build AST(SDT) create AST obj provide token list, start node
 (object corresponding to start symbol), grammar and nodes
