@@ -26,7 +26,7 @@ After creating ParseText obj ( ```parser = ParserText(grammar, "baseexpr")``` ) 
 some list of tokens (list of token type to be more precise) can be generated 
 from specified grammar just call parse method (which returns True or False)
 with token list as its argument
-```
+```python
 parser.parse(token_list)
 ```
 
@@ -46,7 +46,10 @@ class MathopNode(Node):
 class PlusNode(LeafNode):
 	pass
 ```
+Some "leaf" symbols obviously don't have any semantic meaning like ```and``` so for them there is
+no need to be represented with a class.
 
+Semantic meaning of each symbole is defined by overriding Node's ```dooperation()``` method.
 
 To build AST(SDT) create AST obj provide token list, start node
 (object corresponding to start symbol), grammar and nodes
