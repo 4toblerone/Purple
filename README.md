@@ -38,22 +38,36 @@ something that very much resembles to AST.
 Every symbol in a grammar should be represented with a class of its own. 
 Depending if symbol is a "leaf" or a "node" (it's a leaf if it doesn't have production rule
 otherwise it's a node) coresponding class should inherit from LeafNode or Node class.
-So in our example for symbols mathop and plus we would have
-```python
-class MathopNode(Node):
-	pass
-	
-class PlusNode(LeafNode):
-	pass
-```
+
 Some "leaf" symbols obviously don't have any semantic meaning like ```and``` so for them there is
 no need to be represented with a class.
 
 Semantic meaning of each symbol is defined by overriding Node's ```dooperation()``` method.
 For 'leaf' symbols if not overriden dooperation will return value of token associated with that
 particular symbol.
+So in our example for symbols mathop and plus we would have
 
+```python
+class MathOpNode(Node):
+	dooperation():
+		#return some value
+	
+class PlusNode(LeafNode):
+	dooperation():
+		#return some value
+```
 
+Final stage is to create dict with symbols as keys and theirs corresponding classes as values.
 
-To build AST(SDT) create AST obj provide token list, start node
-(object corresponding to start symbol), grammar and nodes
+```python
+nodes={
+	"mathopnode" : MathOpNode,
+	"plus" : "PlusNode"
+	.
+	.
+	.
+}
+```
+
+To build AST(SDT) create AST obj providen with token list, start node (object corresponding to start symbol), 
+grammar and nodes ``` python ast = AST(token_list, start_node, grammar, nodes)``` 
