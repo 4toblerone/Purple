@@ -49,7 +49,11 @@ class PlusNode(LeafNode):
 Some "leaf" symbols obviously don't have any semantic meaning like ```and``` so for them there is
 no need to be represented with a class.
 
-Semantic meaning of each symbole is defined by overriding Node's ```dooperation()``` method.
+Semantic meaning of each symbol is defined by overriding Node's ```dooperation()``` method.
+For 'leaf' symbols if not overriden dooperation will return value of token associated with that
+particular symbol.
+
+
 
 To build AST(SDT) create AST obj provide token list, start node
 (object corresponding to start symbol), grammar and nodes
