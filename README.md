@@ -39,7 +39,7 @@ Every symbol in a grammar should be represented with a class of its own.
 Depending if symbol is a "leaf" or a "node" (it's a leaf if it doesn't have production rule
 otherwise it's a node) coresponding class should inherit from LeafNode or Node class.
 So in our example for symbols mathop and plus we would have
-```
+```python
 class MathopNode(Node):
 	pass
 	
