@@ -72,7 +72,7 @@ nodes={
 To build AST(SDT) first create AST obj providen with token list, start node (object corresponding to start symbol), 
 grammar and nodes ``` ast = AST(token_list, start_node, grammar, nodes)``` 
 and then call create_tree method with start symbol and trace (from parser) as arguments ``` ast.create_tree(start_symbol, trace)```
-After that tree is created and its root is stack2's first element.
+After that tree is created and its root is ```tree_nodes```'s first element.
 
 
 
