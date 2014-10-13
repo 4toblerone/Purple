@@ -13,6 +13,7 @@ Grammar is part defined by the user and part which is necessary
 to create ParseText obj. Grammar is represented in form of a dict, eg:
 `
 ```python
+
 grammar =  {"baseexpr" : [["mathop"]],
     		"mathop": [["number","operator","mathop"],["number"]],
 			"operator":[["plus"],["minus"]]}
@@ -26,6 +27,7 @@ some list of tokens (list of token type to be more precise) can be generated
 from specified grammar just call parse method (which returns True or False)
 with token list as its argument
 ```python
+
 parser.parse(token_list)
 ```
 
@@ -47,7 +49,7 @@ particular symbol.
 So in our example for symbols mathop, operator and plus we would have
 
 ```python
-import operator.
+import operator
 
 class MathOpNode(Node):
 	def dooperation(self):
