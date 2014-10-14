@@ -88,13 +88,8 @@ grammar and nodes ``` ast = AST(token_list, start_node, grammar, nodes)```
 and then call create_tree method with start symbol and trace (from parser) as arguments ``` ast.create_tree(start_symbol, trace)```
 After that tree is created and its root is ```tree_nodes```'s first element.
 
-Assuming you have defined semantic meaning(with overriding ```dooperation()```) for every symbol, to execute your source code
-you can just call ```dooperation()``` on the root node of the previously created tree,
-```python 
-
-result = ast.stack2[0].dooperation() 
-
-```
+Assuming you have defined semantics (with overriding ```dooperation()```) for every symbol, to execute your source code
+you can just call ```ast.execute()``` .
 
 
 
