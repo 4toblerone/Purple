@@ -12,15 +12,6 @@ from EngineRoom import ParseText, AST, breakDownStringToTokens
 class EngineRoomTC(unittest.TestCase):
 	"""Tests for EngineRoom"""
 
-	# def check(node, rule):
-	# 	for r in rule:
-	# 		if r in self.nodes:
-	# 			if r in self.grammar:
-	# 				#then it should be non leaf aka NODE
-	# 				#and be type of nodes[r] points to
-
-	# 				pass
-
 	def setUp(self):
 		print "setting up mock grammar and parser"
 		testName = self.shortDescription()
