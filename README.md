@@ -38,7 +38,7 @@ something that very much resembles to AST.
 
 Every symbol in a grammar should be represented with a class of its own. 
 Depending if symbol is a "leaf" or a "node" (it's a leaf if it doesn't have production rule
-otherwise it's a node) coresponding class should inherit from LeafNode or Node class.
+otherwise it's a node) corresponding class should inherit from LeafNode or Node class.
 
 Some "leaf" symbols obviously don't have any semantic meaning like ```and``` so for them there is
 no need to be represented with a class.
