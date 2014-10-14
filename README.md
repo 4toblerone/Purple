@@ -61,7 +61,7 @@ class MathOpNode(Node):
         else:
             return self.childrens[0].dooperation()
             
-class Operator(Node):
+class OperatorNode(Node):
 	def dooperation(self):
 		return self.childrens[0].dooperation()
             
@@ -75,6 +75,7 @@ Final stage is to create dict with symbols as keys and theirs corresponding clas
 ```python
 nodes={
 	"mathopnode" : MathOpNode,
+	"operator" : OperatorNode,
 	"plus" : PlusNode,
 	.
 	.
@@ -88,7 +89,10 @@ and then call create_tree method with start symbol and trace (from parser) as ar
 After that tree is created and its root is ```tree_nodes```'s first element.
 
 Assuming you have defined semantic meaning(with overriding ```dooperation()```) for every symbol, to execute your source code
-you can just call ```dooperation()``` on the root node of the previously created tree. 
+you can just call ```dooperation()``` on the root node of the previously created tree,
+```python 
+
+result = ast.stack2[0].dooperation() ```
 
 
 
