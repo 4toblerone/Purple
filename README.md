@@ -92,7 +92,9 @@ Assuming you have defined semantic meaning(with overriding ```dooperation()```) 
 you can just call ```dooperation()``` on the root node of the previously created tree,
 ```python 
 
-result = ast.stack2[0].dooperation() ```
+result = ast.stack2[0].dooperation() 
+
+```
 
 
 
