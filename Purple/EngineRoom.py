@@ -45,6 +45,8 @@ class SyntaxException(Exception):
 
 class ParseText:
 
+    #add test for grammar and start_nonterminal
+    #cuz the must not be none
     def __init__(self, grammar, start_nonterminal):
         """
         Keywords arguments:
@@ -68,27 +70,27 @@ class ParseText:
         self.x = 0 #all tokens matched
         self.removed = {}
 
-    def addnewtohs(self, rule):
+    def add_new_to_hs(self, rule):
         self.helperstack.append([rule, 0])
 
-    def uphelperstack(self):
+    def up_hs(self):
         for upstair_rule in self.helperstack:
             upstair_rule[1] += 1
 
-    def removefromhs(self):
+    def remove_from_hs(self):
         tocut = self.helperstack[-1][1]
         del self.helperstack[-1]
         for upstair_rule in self.helperstack:
             upstair_rule[1] -= tocut
         return tocut
 
-    def downsizehs(self):
+    def downsize_hs(self):
         tocut = self.helperstack[-1][1]
         for node in self.helperstack:
             node[1] -= self.helperstack[-1][1]
         return tocut
 
-    def deletelasths(self):
+    def delete_last_hs(self):
         del self.helperstack[-1]
 
     def move_forward(self):
@@ -142,7 +144,7 @@ class ParseText:
                         del self.where_was_i[self.helperstack[-1][0]][-1]
                         if self.helperstack[-1][0] in self.removed:
                             self.removed[self.helperstack[-1][0]][0] -= 1
-                        self.x -= self.removefromhs()
+                        self.x -= self.remove_from_hs()
                     self.move_forward()
                     return self._validate(token_list)
 
@@ -169,7 +171,7 @@ class ParseText:
                 self.move_forward()
                 # delete the last one on where_was_i and delete
                 # kids of his parent
-                self.x -= self.downsizehs()
+                self.x -= self.downsize_hs()
                 return self._validate(token_list)
             elif len(self.daddy_stack) > 1:
                 # if we tried every grupe of rules, delete everything
@@ -182,8 +184,8 @@ class ParseText:
                     else:
                         del self.where_was_i[self.helperstack[-1][0]][-1]
                     self.removed[self.helperstack[-1][0]][0] -= 1
-                    self.x -= self.removefromhs()
-                self.x -= self.downsizehs()
+                    self.x -= self.remove_from_hs()
+                self.x -= self.downsize_hs()
                 self.move_forward()
                 return self._validate(token_list)
             else:
@@ -196,7 +198,7 @@ class ParseText:
                 if self.x <= len(token_list) - 1 and rule == token_list[self.x].type.lower():
                     self.x += 1
                     self.where_was_i[self.daddy_stack[-1]][-1][2] += 1
-                    self.uphelperstack()
+                    self.up_hs()
                     # did we finish one list of rules, if we did and
                     # on daddy_stack has more then one 
                     if self.where_was_i[self.daddy_stack[-1]][-1][0] == len(rule_list):
@@ -207,7 +209,7 @@ class ParseText:
                                 self.removed[self.daddy_stack[-1]].append(
                                     (self.removed[self.daddy_stack[-1]][0], poslednji))
                             self.daddy_stack.pop()
-                            # self.deletelasths()
+                            # self.delete_last_hs()
                             return self._validate(token_list)
                         else:
                             return False
@@ -224,8 +226,8 @@ class ParseText:
                             else:
                                 del self.where_was_i[self.helperstack[-1][0]][-1]
                             self.removed[self.helperstack[-1][0]][0] -= 1
-                            self.x -= self.removefromhs()
-                        self.x -= self.downsizehs()
+                            self.x -= self.remove_from_hs()
+                        self.x -= self.downsize_hs()
                         self.where_was_i[self.daddy_stack[-1]][-1][2] = 0
                         return self._validate(token_list)
                     elif len(self.daddy_stack) > 1:
@@ -237,9 +239,9 @@ class ParseText:
                             else:
                                 del self.where_was_i[self.helperstack[-1][0]][-1]
                             self.removed[self.helperstack[-1][0]][0] -= 1
-                            self.x -= self.removefromhs()
+                            self.x -= self.remove_from_hs()
                         
-                        self.x -= self.downsizehs()
+                        self.x -= self.downsize_hs()
                         self.where_was_i[self.daddy_stack[-1]][-1][2] = 0
                         
                         del self.where_was_i[self.daddy_stack[-1]][-1]
@@ -248,8 +250,8 @@ class ParseText:
                         # if there are more rule lists in the list
                         if len(self.grammar[self.daddy_stack[-1]]) - 1 > self.where_was_i[self.daddy_stack[-1]][-1][1]:
                             self.move_forward()
-                            self.x -= self.downsizehs()
-                            self.deletelasths()
+                            self.x -= self.downsize_hs()
+                            self.delete_last_hs()
                         else:
                             self.where_was_i[self.daddy_stack[-1]][-1][0] = len(
                                 self.grammar[self.daddy_stack[-1]][self.where_was_i[self.daddy_stack[-1]][-1][1]])
@@ -261,7 +263,7 @@ class ParseText:
             else:
                 self.where_was_i[self.daddy_stack[-1]][-1][0] += 1
                 self.daddy_stack.append(rule)
-                self.addnewtohs(rule)
+                self.add_new_to_hs(rule)
                 if rule not in self.where_was_i:
                     self.where_was_i[rule] = []
                 self.where_was_i[rule].append([0, 0, 0])
@@ -312,25 +314,31 @@ class AST(object):
         self.start_node = start_node
         self.token_list = token_list
         self.stack = [self.start_node]
-        self.stack2 = []
+        self.tree_nodes = []
         self.dek = deque(self.token_list)
         self.grammar = grammar
         self.nodes = nodes
 
     def _initialize(self):
         self.stack = [self.start_node]
-        self.stack2 = []
+        self.tree_nodes = []
         self.dek = deque(self.token_list)
 
+    def execute(self):
+        try:
+            self.tree_nodes[0].dooperation()
+        except IndexError:
+            print "AST seems to be empty"
+            
     # TODO initialize before tree creation starts
     # TODO think about generators
-    def createnode(self,class_ref, *args):
+    def create_node(self,class_ref, *args):
         return class_ref(*args)
 
-    def createleaf(self,class_ref, token_value):
-        return self.createnode(class_ref, token_value)
+    def create_leaf(self,class_ref, token_value):
+        return self.create_node(class_ref, token_value)
 
-    def createtree(self, key, trace):
+    def create_tree(self, key, trace):
         """
         Recursively creates SDT tree using language grammar
         and trace left by parse function
@@ -345,20 +353,20 @@ class AST(object):
         for index, rule in enumerate(self.grammar[key][rulenum]):
             if rule in self.nodes:
                 if rule not in self.grammar:
-                    self.stack[-1].add(self.createleaf(self.nodes[rule], self.dek.popleft()))
+                    self.stack[-1].add(self.create_leaf(self.nodes[rule], self.dek.popleft()))
                     if index == len(self.grammar[key][rulenum]) - 1 and len(self.stack) > 1:
                         self.stack.pop()
                         del trace[key][0]
                 else:
-                    node = self.createnode(self.nodes[rule])
+                    node = self.create_node(self.nodes[rule])
                     self.stack[-1].add(node)
                     if index == len(self.grammar[key][rulenum]) - 1:
                         if len(self.stack) == 1:
-                            self.stack2.append(self.stack.pop())
+                            self.tree_nodes.append(self.stack.pop())
                         else:
                             self.stack.pop()
                         del trace[key][0]
                     self.stack.append(node)
-                    self.createtree(rule,trace)
+                    self.create_tree(rule,trace)
             else:
                 self.dek.popleft()

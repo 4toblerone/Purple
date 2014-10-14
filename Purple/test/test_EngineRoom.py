@@ -39,13 +39,13 @@ class EngineRoomTC(unittest.TestCase):
 			self.ast =  AST(self.tokenListOne, start_node,data.grammar, data.nodes)
 			self.parser.parse(self.tokenListOne)
 			trace = self.parser.where_was_i
-			self.ast.createtree("baseexpr",trace)
-			# print self.ast.stack2[0].dooperation() 
+			self.ast.create_tree("baseexpr",trace)
+			# print self.ast.tree_nodes[0].dooperation() 
 		elif testName == "build AST test":
 			self.ast =  AST(self.tokenListTwo, start_node,data.grammar, data.nodes)
 			self.parser.parse(self.tokenListTwo)
 			trace = self.parser.where_was_i
-			self.ast.createtree("baseexpr",trace)
+			self.ast.create_tree("baseexpr",trace)
 
 	def tearDown(self):
 		print "i m done"
@@ -63,9 +63,9 @@ class EngineRoomTC(unittest.TestCase):
 	# then handwritten one
 	def test_build_ast(self):
 		"build AST test"
-		self.assertIsInstance(self.ast.stack2[0], data.BaseExprNode)
+		self.assertIsInstance(self.ast.tree_nodes[0], data.BaseExprNode)
 		
-		parent_node =  self.ast.stack2[0]
+		parent_node =  self.ast.tree_nodes[0]
 		self.assertIsInstance(parent_node.childrens[0], data.AndMathOpNode)
 		
 		child_node = parent_node.childrens[0]
@@ -85,7 +85,7 @@ class EngineRoomTC(unittest.TestCase):
 	
 	# def test_execute_code(self):
 	# 	"execute code"
-	# 	self.assertEqual(self.ast.stack2[0].dooperation(), 20)
+	# 	self.assertEqual(self.ast.tree_nodes[0].dooperation(), 20)
 
 if __name__ == '__main__':
 	unittest.main()
