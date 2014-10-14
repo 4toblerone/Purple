@@ -89,7 +89,7 @@ and then call create_tree method with start symbol and trace (from parser) as ar
 After that tree is created and its root is ```tree_nodes```'s first element.
 
 Assuming you have defined semantics (with overriding ```dooperation()```) for every symbol, to execute your source code
-you can just call ```ast.execute()``` .
+you can just call ```ast.execute()``` , which calls ```dooperation()``` on the root of the ast tree.
 
 
 
