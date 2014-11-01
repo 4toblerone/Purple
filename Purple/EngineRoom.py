@@ -370,3 +370,13 @@ class AST(object):
                     self.create_tree(rule,trace)
             else:
                 self.dek.popleft()
+
+class SymbolTable(object):
+    def __init__(self):
+        pass
+
+class Scope(object):
+    def __init__(self, outerscope=None):
+        self.outerscope = outerscope
+        
+        

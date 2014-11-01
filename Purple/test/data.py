@@ -115,3 +115,31 @@ nodes = {"baseexpr": BaseExprNode,
          "number" : NumberNode,
          "plus": PlusNode,
          "minus": MinusNode}
+
+
+def bajt (arg1):
+    def fun(arg2):
+        print arg1 + arg2
+
+    return fun
+
+BYTECODE ={}
+
+def bytecode(code):
+    def cl(func):
+        BYTECODE[code] = func
+        return func
+
+    return cl
+
+# @bytecode(code = "pet")
+def proba(arg1):
+    print arg1
+
+# proba("argument")
+# print BYTECODE
+
+bytecode("neki kod")("string")
+print BYTECODE
+proba = bytecode("stoti")
+proba("pet")
