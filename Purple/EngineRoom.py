@@ -376,7 +376,12 @@ class SymbolTable(object):
         pass
 
 class Scope(object):
+    #implement iterator protocol?
     def __init__(self, outerscope=None):
         self.outerscope = outerscope
+        self.symbol_table = SymbolTable()
+
+    def get_var_value(self,variable):
+        pass
         
         
